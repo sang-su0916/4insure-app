@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>4대보험뚝딱 💼</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --primary: #2563eb;
+    --primary-dark: #1d4ed8;
+    --bg: #f8fafc;
+    --surface: #ffffff;
+    --text: #1e293b;
+    --text-dim: #64748b;
+    --border: #e2e8f0;
+    --success: #10b981;
+    --warning: #f59e0b;
+    --danger: #ef4444;
+    --info: #0ea5e9;
+  }
+  body { font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+
+  /* Header */
+  .header { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; padding: 24px 20px; text-align: center; }
+  .header h1 { font-size: 24px; font-weight: 700; margin-bottom: 4px; }
+  .header p { font-size: 14px; opacity: 0.9; }
+
+  /* Container */
+  .container { max-width: 800px; margin: 0 auto; padding: 20px; }
+
+  /* Tabs */
+  .tabs { display: flex; background: var(--surface); border-radius: 12px; padding: 4px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+  .tab { flex: 1; padding: 12px; text-align: center; font-size: 14px; font-weight: 600; border-radius: 8px; cursor: pointer; color: var(--text-dim); transition: all 0.2s; border: none; background: none; }
+  .tab.active { background: var(--primary); color: white; }
+
+  /* Cards */
+  .card { background: var(--surface); border-radius: 16px; padding: 24px; margin-bottom: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+  .card-title { font-size: 16px; font-weight: 700; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+  .card-title .icon { font-size: 20px; }
+
+  /* Form */
+  .form-group { margin-bottom: 16px; }
+  .form-group label { display: block; font-size: 13px; font-weight: 600; color: var(--text-dim); margin-bottom: 6px; }
+  .form-group input, .form-group select {
+    width: 100%; padding: 12px 14px; border: 1px solid var(--border); border-radius: 10px;
+    font-size: 15px; transition: border 0.2s; background: var(--bg);
+  }
+  .form-group input:focus, .form-group select:focus { outline: none; border-color: var(--primary); }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .form-hint { font-size: 12px; color: var(--text-dim); margin-top: 4px; }
+
+  /* Button */
+  .btn { width: 100%; padding: 14px; border-radius: 10px; border: none; font-size: 15px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+  .btn-primary { background: var(--primary); color: white; }
+  .btn-primary:hover { background: var(--primary-dark); }
+  .btn-secondary { background: var(--bg); color: var(--text); border: 1px solid var(--border); }
+  .btn-sm { padding: 8px 16px; font-size: 13px; width: auto; }
+
+  /* Results */
+  .result-section { margin-top: 24px; }
+  .result-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+  .result-header h2 { font-size: 18px; font-weight: 700; }
+  .result-total { font-size: 14px; color: var(--text-dim); }
+  .result-total strong { font-size: 20px; color: var(--primary); }
+
+  .result-table { width: 100%; border-collapse: collapse; }
+  .result-table th, .result-table td { padding: 12px; text-align: left; border-bottom: 1px solid var(--border); font-size: 14px; }
+  .result-table th { font-weight: 600; color: var(--text-dim); font-size: 12px; text-transform: uppercase; }
+  .result-table tr:last-child td { border-bottom: none; }
+  .result-table .amount { text-align: right; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .result-table .total-row { background: var(--bg); font-weight: 700; }
+  .result-table .total-row td { border-top: 2px solid var(--border); }
+
+  /* Summary boxes */
+  .summary-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 20px; }
+  .summary-box { background: var(--bg); border-radius: 12px; padding: 16px; text-align: center; }
+  .summary-box .label { font-size: 12px; color: var(--text-dim); margin-bottom: 4px; }
+  .summary-box .value { font-size: 20px; font-weight: 700; color: var(--primary); }
+  .summary-box.employer { border-left: 4px solid var(--info); }
+  .summary-box.employee { border-left: 4px solid var(--success); }
+
+  /* Rate settings */
+  .rate-grid { display: grid; gap: 12px; }
+  .rate-item { display: grid; grid-template-columns: 1fr 100px 100px; gap: 8px; align-items: center; padding: 12px; background: var(--bg); border-radius: 8px; }
+  .rate-item .name { font-size: 14px; font-weight: 500; }
+  .rate-item input { padding: 8px; text-align: center; font-size: 13px; }
+
+  /* Dururi section */
+  .dururi-check { background: linear-gradient(135deg, #fef3c7, #fde68a); border-radius: 12px; padding: 16px; margin-bottom: 16px; }
+  .dururi-check h3 { font-size: 14px; font-weight: 600; color: #92400e; margin-bottom: 8px; }
+  .dururi-check p { font-size: 13px; color: #a16207; }
+  .dururi-eligible { background: linear-gradient(135deg, #d1fae5, #a7f3d0); }
+  .dururi-eligible h3 { color: #065f46; }
+  .dururi-eligible p { color: #047857; }
+
+  /* Notice */
+  .notice { background: #fef9c3; border-left: 4px solid var(--warning); padding: 12px 16px; border-radius: 0 8px 8px 0; margin-bottom: 16px; font-size: 13px; color: #854d0e; }
+
+  /* Industry select */
+  .industry-rates { max-height: 300px; overflow-y: auto; margin-top: 12px; }
+  .industry-item { display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid var(--border); font-size: 13px; cursor: pointer; transition: background 0.2s; }
+  .industry-item:hover { background: var(--bg); }
+  .industry-item.selected { background: #dbeafe; }
+
+  /* Print */
+  .print-btn { margin-top: 16px; }
+  @media print {
+    .no-print { display: none !important; }
+    .card { box-shadow: none; border: 1px solid #ddd; }
+  }
+
+  /* Responsive */
+  @media (max-width: 600px) {
+    .form-row { grid-template-columns: 1fr; }
+    .summary-grid { grid-template-columns: 1fr; }
+    .rate-item { grid-template-columns: 1fr; gap: 4px; }
+    .rate-item input { width: 100%; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>💼 4대보험뚝딱</h1>
+  <p>소상공인을 위한 4대보험료 계산기</p>
+</div>
+
+<div class="container">
+  <!-- Notice -->
+  <div class="notice no-print">
+    ⚠️ <strong>주의:</strong> 본 계산기의 요율은 참고용입니다. 정확한 요율은 <a href="https://www.4insure.or.kr" target="_blank">4대사회보험 정보연계센터</a>에서 확인하세요.
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs no-print">
+    <button class="tab active" onclick="switchTab('calc')">보험료 계산</button>
+    <button class="tab" onclick="switchTab('dururi')">두루누리 확인</button>
+    <button class="tab" onclick="switchTab('settings')">요율 설정</button>
+  </div>
+
+  <!-- Calculator Tab -->
+  <div id="tab-calc">
+    <div class="card">
+      <div class="card-title"><span class="icon">👤</span> 근로자 정보</div>
+      
+      <div class="form-row">
+        <div class="form-group">
+          <label>월 급여 (원)</label>
+          <input type="text" id="salary" placeholder="3,000,000" oninput="formatNumber(this); calculate()">
+        </div>
+        <div class="form-group">
+          <label>사업장 규모</label>
+          <select id="companySize" onchange="calculate()">
+            <option value="under10">10인 미만</option>
+            <option value="under50">10인 이상 50인 미만</option>
+            <option value="under150">50인 이상 150인 미만</option>
+            <option value="under1000">150인 이상 1000인 미만</option>
+            <option value="over1000">1000인 이상</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>업종 (산재보험)</label>
+          <select id="industry" onchange="calculate()">
+            <option value="1.10">사무직 (1.10%)</option>
+            <option value="0.70">금융·보험업 (0.70%)</option>
+            <option value="0.90">도소매·음식숙박업 (0.90%)</option>
+            <option value="1.40">제조업-일반 (1.40%)</option>
+            <option value="1.80">건설업-일반 (1.80%)</option>
+            <option value="2.20">운수업 (2.20%)</option>
+            <option value="0.80">교육서비스업 (0.80%)</option>
+            <option value="1.00">보건·사회복지 (1.00%)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>근로자 유형</label>
+          <select id="workerType" onchange="calculate()">
+            <option value="regular">정규직</option>
+            <option value="daily">일용직</option>
+          </select>
+        </div>
+      </div>
+
+      <button class="btn btn-primary" onclick="calculate()">계산하기</button>
+    </div>
+
+    <!-- Results -->
+    <div id="results" style="display: none;">
+      <div class="card result-section">
+        <div class="result-header">
+          <h2>📊 계산 결과</h2>
+        </div>
+
+        <div class="summary-grid">
+          <div class="summary-box employer">
+            <div class="label">사업주 부담</div>
+            <div class="value" id="totalEmployer">0원</div>
+          </div>
+          <div class="summary-box employee">
+            <div class="label">근로자 부담</div>
+            <div class="value" id="totalEmployee">0원</div>
+          </div>
+        </div>
+
+        <table class="result-table">
+          <thead>
+            <tr>
+              <th>항목</th>
+              <th class="amount">사업주</th>
+              <th class="amount">근로자</th>
+            </tr>
+          </thead>
+          <tbody id="resultBody">
+          </tbody>
+          <tfoot>
+            <tr class="total-row">
+              <td><strong>합계</strong></td>
+              <td class="amount" id="footerEmployer">0원</td>
+              <td class="amount" id="footerEmployee">0원</td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+
+      <!-- Additional Info -->
+      <div class="card">
+        <div class="card-title"><span class="icon">💡</span> 참고 정보</div>
+        <div id="additionalInfo" style="font-size: 14px; color: var(--text-dim);"></div>
+      </div>
+
+      <button class="btn btn-secondary print-btn no-print" onclick="window.print()">🖨️ 인쇄하기</button>
+    </div>
+  </div>
+
+  <!-- Dururi Tab -->
+  <div id="tab-dururi" style="display: none;">
+    <div class="card">
+      <div class="card-title"><span class="icon">🌈</span> 두루누리 지원금 확인</div>
+      <p style="font-size: 14px; color: var(--text-dim); margin-bottom: 16px;">
+        두루누리 사회보험료 지원사업은 소규모 사업장의 사업주와 근로자의 사회보험료 일부를 국가에서 지원하는 제도입니다.
+      </p>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>근로자 수</label>
+          <input type="number" id="dururiWorkers" placeholder="5" value="5">
+        </div>
+        <div class="form-group">
+          <label>근로자 월 급여 (원)</label>
+          <input type="text" id="dururiSalary" placeholder="2,700,000" oninput="formatNumber(this)">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>신규가입 여부</label>
+        <select id="dururiNew">
+          <option value="new">신규가입 (6개월 이상 미가입)</option>
+          <option value="existing">기존가입자</option>
+        </select>
+      </div>
+
+      <button class="btn btn-primary" onclick="checkDururi()">지원 대상 확인</button>
+
+      <div id="dururiResult" style="margin-top: 16px;"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="icon">📋</span> 두루누리 지원 조건</div>
+      <ul style="font-size: 14px; color: var(--text-dim); padding-left: 20px;">
+        <li style="margin-bottom: 8px;"><strong>사업장 규모:</strong> 근로자 10인 미만</li>
+        <li style="margin-bottom: 8px;"><strong>근로자 요건:</strong> 월평균 보수 270만원 미만</li>
+        <li style="margin-bottom: 8px;"><strong>지원 내용:</strong> 국민연금·고용보험료의 80% 지원 (신규가입자)</li>
+        <li style="margin-bottom: 8px;"><strong>지원 기간:</strong> 최대 36개월</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Settings Tab -->
+  <div id="tab-settings" style="display: none;">
+    <div class="card">
+      <div class="card-title"><span class="icon">⚙️</span> 2026년 4대보험 요율 설정</div>
+      <p style="font-size: 13px; color: var(--text-dim); margin-bottom: 16px;">
+        아래 요율을 공식 자료에 맞게 수정하세요. 수정 후 "저장" 버튼을 누르면 로컬에 저장됩니다.
+      </p>
+
+      <div class="rate-grid">
+        <div class="rate-item">
+          <span class="name">국민연금</span>
+          <input type="text" id="rate_pension_employer" value="4.5" placeholder="사업주 %">
+          <input type="text" id="rate_pension_employee" value="4.5" placeholder="근로자 %">
+        </div>
+        <div class="rate-item">
+          <span class="name">건강보험</span>
+          <input type="text" id="rate_health_employer" value="3.545" placeholder="사업주 %">
+          <input type="text" id="rate_health_employee" value="3.545" placeholder="근로자 %">
+        </div>
+        <div class="rate-item">
+          <span class="name">장기요양보험 (건보료의 %)</span>
+          <input type="text" id="rate_longterm" value="12.95" placeholder="요율 %">
+          <span style="font-size: 12px; color: var(--text-dim);">사업주/근로자 50:50</span>
+        </div>
+        <div class="rate-item">
+          <span class="name">고용보험 (실업급여)</span>
+          <input type="text" id="rate_employ_employer" value="0.9" placeholder="사업주 %">
+          <input type="text" id="rate_employ_employee" value="0.9" placeholder="근로자 %">
+        </div>
+      </div>
+
+      <div style="margin-top: 16px;">
+        <div class="card-title" style="font-size: 14px;"><span class="icon">🏢</span> 고용안정·직업능력개발 (사업주만 부담)</div>
+        <div class="rate-grid">
+          <div class="rate-item">
+            <span class="name">150인 미만</span>
+            <input type="text" id="rate_dev_under150" value="0.25" placeholder="%">
+            <span></span>
+          </div>
+          <div class="rate-item">
+            <span class="name">150인 이상 (우선지원)</span>
+            <input type="text" id="rate_dev_150priority" value="0.45" placeholder="%">
+            <span></span>
+          </div>
+          <div class="rate-item">
+            <span class="name">150~1000인 미만</span>
+            <input type="text" id="rate_dev_under1000" value="0.65" placeholder="%">
+            <span></span>
+          </div>
+          <div class="rate-item">
+            <span class="name">1000인 이상</span>
+            <input type="text" id="rate_dev_over1000" value="0.85" placeholder="%">
+            <span></span>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top: 20px; display: flex; gap: 8px;">
+        <button class="btn btn-primary" onclick="saveRates()">💾 저장</button>
+        <button class="btn btn-secondary" onclick="resetRates()">↩️ 기본값 복원</button>
+      </div>
+
+      <div style="margin-top: 16px; padding: 12px; background: var(--bg); border-radius: 8px; font-size: 12px; color: var(--text-dim);">
+        <strong>📌 공식 출처:</strong><br>
+        • 국민연금: <a href="https://www.nps.or.kr" target="_blank">국민연금공단</a><br>
+        • 건강보험: <a href="https://www.nhis.or.kr" target="_blank">국민건강보험공단</a><br>
+        • 고용보험: <a href="https://www.ei.go.kr" target="_blank">고용보험</a><br>
+        • 산재보험: <a href="https://www.kcomwel.or.kr" target="_blank">근로복지공단</a><br>
+        • 통합: <a href="https://www.4insure.or.kr" target="_blank">4대사회보험 정보연계센터</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// Default rates (2026 estimated)
+const defaultRates = {
+  pension: { employer: 4.5, employee: 4.5 },
+  health: { employer: 3.545, employee: 3.545 },
+  longterm: 12.95,
+  employ: { employer: 0.9, employee: 0.9 },
+  dev: {
+    under150: 0.25,
+    priority150: 0.45,
+    under1000: 0.65,
+    over1000: 0.85
+  }
+};
+
+let rates = JSON.parse(JSON.stringify(defaultRates));
+
+// Load saved rates
+function loadRates() {
+  const saved = localStorage.getItem('4insure_rates');
+  if (saved) {
+    rates = JSON.parse(saved);
+    // Update form
+    document.getElementById('rate_pension_employer').value = rates.pension.employer;
+    document.getElementById('rate_pension_employee').value = rates.pension.employee;
+    document.getElementById('rate_health_employer').value = rates.health.employer;
+    document.getElementById('rate_health_employee').value = rates.health.employee;
+    document.getElementById('rate_longterm').value = rates.longterm;
+    document.getElementById('rate_employ_employer').value = rates.employ.employer;
+    document.getElementById('rate_employ_employee').value = rates.employ.employee;
+    document.getElementById('rate_dev_under150').value = rates.dev.under150;
+    document.getElementById('rate_dev_150priority').value = rates.dev.priority150;
+    document.getElementById('rate_dev_under1000').value = rates.dev.under1000;
+    document.getElementById('rate_dev_over1000').value = rates.dev.over1000;
+  }
+}
+
+function saveRates() {
+  rates.pension.employer = parseFloat(document.getElementById('rate_pension_employer').value) || 4.5;
+  rates.pension.employee = parseFloat(document.getElementById('rate_pension_employee').value) || 4.5;
+  rates.health.employer = parseFloat(document.getElementById('rate_health_employer').value) || 3.545;
+  rates.health.employee = parseFloat(document.getElementById('rate_health_employee').value) || 3.545;
+  rates.longterm = parseFloat(document.getElementById('rate_longterm').value) || 12.95;
+  rates.employ.employer = parseFloat(document.getElementById('rate_employ_employer').value) || 0.9;
+  rates.employ.employee = parseFloat(document.getElementById('rate_employ_employee').value) || 0.9;
+  rates.dev.under150 = parseFloat(document.getElementById('rate_dev_under150').value) || 0.25;
+  rates.dev.priority150 = parseFloat(document.getElementById('rate_dev_150priority').value) || 0.45;
+  rates.dev.under1000 = parseFloat(document.getElementById('rate_dev_under1000').value) || 0.65;
+  rates.dev.over1000 = parseFloat(document.getElementById('rate_dev_over1000').value) || 0.85;
+
+  localStorage.setItem('4insure_rates', JSON.stringify(rates));
+  alert('요율이 저장되었습니다!');
+}
+
+function resetRates() {
+  if (confirm('기본값으로 복원하시겠습니까?')) {
+    rates = JSON.parse(JSON.stringify(defaultRates));
+    localStorage.removeItem('4insure_rates');
+    loadRates();
+    location.reload();
+  }
+}
+
+// Tab switching
+function switchTab(tab) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  event.target.classList.add('active');
+  document.getElementById('tab-calc').style.display = tab === 'calc' ? '' : 'none';
+  document.getElementById('tab-dururi').style.display = tab === 'dururi' ? '' : 'none';
+  document.getElementById('tab-settings').style.display = tab === 'settings' ? '' : 'none';
+}
+
+// Format number with commas
+function formatNumber(input) {
+  let value = input.value.replace(/[^\d]/g, '');
+  input.value = value.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+}
+
+function parseNumber(str) {
+  return parseInt(str.replace(/[^\d]/g, '')) || 0;
+}
+
+function formatCurrency(num) {
+  return Math.round(num).toLocaleString('ko-KR') + '원';
+}
+
+// Get dev rate based on company size
+function getDevRate(size) {
+  switch(size) {
+    case 'under10':
+    case 'under50':
+    case 'under150': return rates.dev.under150;
+    case 'under1000': return rates.dev.under1000;
+    case 'over1000': return rates.dev.over1000;
+    default: return rates.dev.under150;
+  }
+}
+
+// Calculate
+function calculate() {
+  const salary = parseNumber(document.getElementById('salary').value);
+  if (!salary) return;
+
+  const companySize = document.getElementById('companySize').value;
+  const industryRate = parseFloat(document.getElementById('industry').value);
+  const workerType = document.getElementById('workerType').value;
+
+  // 국민연금 상하한
+  const pensionMax = 6170000; // 2026 예상 상한
+  const pensionMin = 390000;  // 하한
+  const pensionBase = Math.max(pensionMin, Math.min(salary, pensionMax));
+
+  // 건강보험 상한 (보수월액 상한)
+  const healthMax = 119625000; // 월 상한
+  const healthBase = Math.min(salary, healthMax);
+
+  // 계산
+  const pension_employer = pensionBase * (rates.pension.employer / 100);
+  const pension_employee = pensionBase * (rates.pension.employee / 100);
+
+  const health_employer = healthBase * (rates.health.employer / 100);
+  const health_employee = healthBase * (rates.health.employee / 100);
+
+  const longterm_employer = health_employer * (rates.longterm / 100);
+  const longterm_employee = health_employee * (rates.longterm / 100);
+
+  const employ_employer = salary * (rates.employ.employer / 100);
+  const employ_employee = salary * (rates.employ.employee / 100);
+
+  const devRate = getDevRate(companySize);
+  const dev_employer = salary * (devRate / 100);
+
+  const accident_employer = salary * (industryRate / 100);
+
+  // 합계
+  const totalEmployer = pension_employer + health_employer + longterm_employer + employ_employer + dev_employer + accident_employer;
+  const totalEmployee = pension_employee + health_employee + longterm_employee + employ_employee;
+
+  // Display
+  document.getElementById('results').style.display = '';
+  document.getElementById('totalEmployer').textContent = formatCurrency(totalEmployer);
+  document.getElementById('totalEmployee').textContent = formatCurrency(totalEmployee);
+  document.getElementById('footerEmployer').textContent = formatCurrency(totalEmployer);
+  document.getElementById('footerEmployee').textContent = formatCurrency(totalEmployee);
+
+  const tbody = document.getElementById('resultBody');
+  tbody.innerHTML = `
+    <tr>
+      <td>국민연금</td>
+      <td class="amount">${formatCurrency(pension_employer)}</td>
+      <td class="amount">${formatCurrency(pension_employee)}</td>
+    </tr>
+    <tr>
+      <td>건강보험</td>
+      <td class="amount">${formatCurrency(health_employer)}</td>
+      <td class="amount">${formatCurrency(health_employee)}</td>
+    </tr>
+    <tr>
+      <td>장기요양보험</td>
+      <td class="amount">${formatCurrency(longterm_employer)}</td>
+      <td class="amount">${formatCurrency(longterm_employee)}</td>
+    </tr>
+    <tr>
+      <td>고용보험 (실업급여)</td>
+      <td class="amount">${formatCurrency(employ_employer)}</td>
+      <td class="amount">${formatCurrency(employ_employee)}</td>
+    </tr>
+    <tr>
+      <td>고용보험 (고용안정·직능개발)</td>
+      <td class="amount">${formatCurrency(dev_employer)}</td>
+      <td class="amount">-</td>
+    </tr>
+    <tr>
+      <td>산재보험</td>
+      <td class="amount">${formatCurrency(accident_employer)}</td>
+      <td class="amount">-</td>
+    </tr>
+  `;
+
+  // Additional info
+  const info = document.getElementById('additionalInfo');
+  const monthlyTotal = totalEmployer + totalEmployee;
+  const yearlyTotal = monthlyTotal * 12;
+  const employerYearly = totalEmployer * 12;
+
+  info.innerHTML = `
+    <p>• <strong>월 총 4대보험료:</strong> ${formatCurrency(monthlyTotal)}</p>
+    <p>• <strong>연간 총 4대보험료:</strong> ${formatCurrency(yearlyTotal)}</p>
+    <p>• <strong>사업주 연간 부담:</strong> ${formatCurrency(employerYearly)}</p>
+    <p style="margin-top: 8px;">• 국민연금 기준소득월액: ${formatCurrency(pensionBase)}</p>
+    ${salary > pensionMax ? `<p style="color: var(--warning);">⚠️ 국민연금 상한(${formatCurrency(pensionMax)}) 적용됨</p>` : ''}
+  `;
+}
+
+// Dururi check
+function checkDururi() {
+  const workers = parseInt(document.getElementById('dururiWorkers').value) || 0;
+  const salary = parseNumber(document.getElementById('dururiSalary').value);
+  const isNew = document.getElementById('dururiNew').value === 'new';
+
+  const resultDiv = document.getElementById('dururiResult');
+
+  const eligible = workers < 10 && salary < 2700000;
+
+  if (eligible) {
+    const pensionAmount = salary * (rates.pension.employer / 100);
+    const employAmount = salary * (rates.employ.employer / 100);
+    const totalSupport = (pensionAmount + employAmount) * 2; // 사업주+근로자
+
+    const supportRate = isNew ? 80 : 0;
+    const supportAmount = totalSupport * (supportRate / 100);
+
+    resultDiv.innerHTML = `
+      <div class="dururi-check dururi-eligible">
+        <h3>✅ 두루누리 지원 대상입니다!</h3>
+        <p>
+          ${isNew ? '신규가입자로 <strong>80% 지원</strong>을 받을 수 있습니다.' : '기존가입자는 지원 대상이 아닙니다.'}<br>
+          ${isNew ? `예상 월 지원금: <strong>${formatCurrency(supportAmount)}</strong> (사업주+근로자)` : ''}
+        </p>
+      </div>
+    `;
+  } else {
+    let reason = '';
+    if (workers >= 10) reason = '근로자 수가 10인 이상입니다.';
+    else if (salary >= 2700000) reason = '월 급여가 270만원 이상입니다.';
+
+    resultDiv.innerHTML = `
+      <div class="dururi-check">
+        <h3>❌ 지원 대상이 아닙니다</h3>
+        <p>${reason}</p>
+      </div>
+    `;
+  }
+}
+
+// Init
+loadRates();
+</script>
+
+</body>
+</html>
